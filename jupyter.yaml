@@ -415,10 +415,62 @@ Resources:
           !Sub |
             #!/bin/bash
             yum update -y aws-cfn-bootstrap # good practice - always do this.
+            /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource JupyterWebServer --configsets jupyter --region ${AWS::Region}
             yum -y update
+            /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource JupyterWebServer --region ${AWS::Region}
+    CreationPolicy:
+        ResourceSignal:
+          Count: "1"
+          Timeout: PT15M
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 9c87ef2f-60fa-4448-bdf6-250be82cb5cb
+      AWS::CloudFormation::Init:
+        configSets:
+          jupyter:
+            - 'configure_cfn'
+            - 'install_nginx'
+        configure_cfn:
+          files:
+            /etc/cfn/hooks.d/cfn-auto-reloader.conf:
+              content: !Sub |
+                [cfn-auto-reloader-hook]
+                triggers=post.update
+                path=Resources.EC2.Metadata.AWS::CloudFormation::Init
+                action=/opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource JupyterWebServer --configsets jupyter --region ${AWS::Region}
+              mode: "000400"
+              owner: root
+              group: root
+            /etc/cfn/cfn-hup.conf:
+              content: !Sub |
+                [main]
+                stack=${AWS::StackId}
+                region=${AWS::Region}
+                verbose=true
+                interval=5
+              mode: "000400"
+              owner: root
+              group: root
+          services:
+            sysvinit:
+              cfn-hup:
+                enabled: "true"
+                ensureRunning: "true"
+                files:
+                  - "/etc/cfn/cfn-hup.conf"
+                  - "/etc/cfn/hooks.d/cfn-auto-reloader.conf"
+        install_nginx:
+          packages:
+            yum:
+              epel-release: []
+              nginx: []
+          services:
+            sysvinit:
+              nginx:
+                enable: 'true'
+                ensureRunning: 'true'
+                files:
+                  - '/etc/nginx/nginx.conf'               
   JupyterSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
