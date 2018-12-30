@@ -430,6 +430,7 @@ Resources:
           jupyter:
             - 'configure_cfn'
             - 'install_nginx'
+            - 'install_anaconda'
         configure_cfn:
           files:
             /etc/cfn/hooks.d/cfn-auto-reloader.conf:
@@ -470,7 +471,18 @@ Resources:
                 enable: 'true'
                 ensureRunning: 'true'
                 files:
-                  - '/etc/nginx/nginx.conf'               
+                  - '/etc/nginx/nginx.conf' 
+        install_anaconda:
+          commands:
+            01_download_anaconda:
+              cwd: '/home/ec2-user'
+              command: 'wget https://repo.continuum.io/archive/Anaconda3-2018.12-Linux-x86_64.sh'
+          #   01_install_anaconda:
+          #     cwd: '/home/ec2-user'
+          #     command: 'bash Anaconda3-2018.12-Linux-x86_64.sh' 
+          #   02_reload_bash:
+          #     cwd: '/home/ec2-user'
+          #     command: 'source .bashrc'             
   JupyterSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
