@@ -421,7 +421,7 @@ Resources:
     CreationPolicy:
         ResourceSignal:
           Count: "1"
-          Timeout: PT15M
+          Timeout: PT20M
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 9c87ef2f-60fa-4448-bdf6-250be82cb5cb
@@ -471,18 +471,24 @@ Resources:
                 enable: 'true'
                 ensureRunning: 'true'
                 files:
-                  - '/etc/nginx/nginx.conf' 
+                  - '/etc/nginx/nginx.conf'
         install_anaconda:
           commands:
             01_download_anaconda:
               cwd: '/home/ec2-user'
               command: 'wget https://repo.continuum.io/archive/Anaconda3-2018.12-Linux-x86_64.sh'
-          #   01_install_anaconda:
-          #     cwd: '/home/ec2-user'
-          #     command: 'bash Anaconda3-2018.12-Linux-x86_64.sh' 
-          #   02_reload_bash:
-          #     cwd: '/home/ec2-user'
-          #     command: 'source .bashrc'             
+            02_install_anaconda:
+              cwd: '/home/ec2-user'
+              command: 'bash Anaconda3-2018.12-Linux-x86_64.sh -b -p /home/ec2-user/anaconda' #install on silent mode
+            03_add_path:
+              cwd: '/home/ec2-user'
+              command: 'echo export PATH=\"/home/ec2-user/anaconda/bin:$PATH\" >> .bashrc'
+            04_reload_bash:
+              cwd: '/home/ec2-user'
+              command: 'source .bashrc'
+            05_delete_download_file:
+              cwd: '/home/ec2-user'
+              command: 'rm -rf Anaconda3-2018.12-Linux-x86_64.sh'
   JupyterSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
