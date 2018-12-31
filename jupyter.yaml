@@ -592,9 +592,6 @@ Resources:
                 c.NotebookApp.port = 8888
                 c.NotebookApp.notebook_dir = '/home/ec2-user/notebooks'
                 c.NotebookApp.allow_root = True
-              mode: "000400"
-              owner: root
-              group: root
           commands:
             01_source_conda:
               cwd: '/home/ec2-user'
