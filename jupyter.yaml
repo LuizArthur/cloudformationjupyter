@@ -483,15 +483,21 @@ Resources:
               command: 'bash Anaconda3-2018.12-Linux-x86_64.sh -b -p /home/ec2-user/anaconda' #install on silent mode
             03_add_path:
               cwd: '/home/ec2-user'
-              command: 'echo ". /home/ec2-user/anaconda/etc/profile.d/conda.sh" >> .bashrc'   #'echo export PATH=\"/home/ec2-user/anaconda/bin:$PATH\" >> .bashrc'
-            04_delete_download_file:
+              command: 'echo "source /home/ec2-user/anaconda/etc/profile.d/conda.sh" >> .bashrc'   #'echo export PATH=\"/home/ec2-user/anaconda/bin:$PATH\" >> .bashrc'
+            04_add_jupyter_env:
+              cwd: '/home/ec2-user'
+              command: 'echo "conda activate jupyter" >> .bashrc'
+            05_delete_download_file:
               cwd: '/home/ec2-user'
               command: 'rm -rf Anaconda3-2018.12-Linux-x86_64.sh'
         configure_jupyter:
           commands:
+            # 01_export_conda_command:
+            #   cwd: '/home/ec2-user'
+            #   command: 'source /home/ec2-user/anaconda/etc/profile.d/conda.sh'
             01_install_python_3_5_6:
               cwd: '/home/ec2-user'
-              command: 'conda create --name jupyter python=3.5.6 anaconda -y'
+              command: '/home/ec2-user/anaconda/bin/conda create --name jupyter python=3.5.6 anaconda -y'
   JupyterSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
