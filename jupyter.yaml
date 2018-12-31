@@ -487,14 +487,20 @@ Resources:
             04_add_jupyter_env:
               cwd: '/home/ec2-user'
               command: 'echo "conda activate jupyter" >> .bashrc'
-            05_delete_download_file:
+            05_install_python_3_5_6:
+              cwd: '/home/ec2-user'
+              command: '/home/ec2-user/anaconda/bin/conda create --name jupyter python=3.5.6 anaconda -y'
+            06_delete_download_file:
               cwd: '/home/ec2-user'
               command: 'rm -rf Anaconda3-2018.12-Linux-x86_64.sh'
         configure_jupyter:
           commands:
-            01_install_python_3_5_6:
+            01_source_conda:
               cwd: '/home/ec2-user'
-              command: '/home/ec2-user/anaconda/bin/conda create --name jupyter python=3.5.6 anaconda -y'
+              command: 'source ./.bashrc' #'sudo ln -s /home/ec2-user/anaconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh'
+            02_generate_config:
+              cwd: '/home/ec2-user'
+              command: 'jupyter notebook --generate-config'
   JupyterSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
