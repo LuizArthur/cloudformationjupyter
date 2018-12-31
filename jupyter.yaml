@@ -482,7 +482,7 @@ Resources:
               command: 'bash Anaconda3-2018.12-Linux-x86_64.sh -b -p /home/ec2-user/anaconda' #install on silent mode
             03_add_path:
               cwd: '/home/ec2-user'
-              command: 'echo export PATH=\"/home/ec2-user/anaconda/bin:$PATH\" >> .bashrc'
+              command: 'echo \". /home/ec2-user/anaconda/etc/profile.d/conda.sh\" >> .bashrc'   #'echo export PATH=\"/home/ec2-user/anaconda/bin:$PATH\" >> .bashrc'
             04_reload_bash:
               cwd: '/home/ec2-user'
               command: 'source .bashrc'
