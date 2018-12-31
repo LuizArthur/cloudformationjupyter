@@ -492,9 +492,6 @@ Resources:
               command: 'rm -rf Anaconda3-2018.12-Linux-x86_64.sh'
         configure_jupyter:
           commands:
-            # 01_export_conda_command:
-            #   cwd: '/home/ec2-user'
-            #   command: 'source /home/ec2-user/anaconda/etc/profile.d/conda.sh'
             01_install_python_3_5_6:
               cwd: '/home/ec2-user'
               command: '/home/ec2-user/anaconda/bin/conda create --name jupyter python=3.5.6 anaconda -y'
