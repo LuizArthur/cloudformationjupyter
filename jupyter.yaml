@@ -626,7 +626,10 @@ Resources:
               command: 'sudo chown -R ec2-user:ec2-user .jupyter/'
             02_change_notebook:
               cwd: '/home/ec2-user'
-              command: 'sudo chown -R ec2-user:ec2-user ./notebooks/'            
+              command: 'sudo chown -R ec2-user:ec2-user ./notebooks/'
+            03_change_anaconda:
+              cwd: '/home/ec2-user'
+              command: 'sudo chown -R ec2-user:ec2-user ./anaconda/'    
   JupyterSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
