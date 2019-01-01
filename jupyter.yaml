@@ -437,6 +437,7 @@ Resources:
             - 'install_nginx'
             - 'install_anaconda'
             - 'configure_jupyter'
+            - 'install_packages'
             - 'change_permissions'
         configure_cfn:
           files:
@@ -613,6 +614,11 @@ Resources:
             03_create_notebooks_folder:
               cwd: '/home/ec2-user'
               command: 'mkdir notebooks'
+        install_packages:
+          commands:
+            01_install_tensorflow:
+              cwd: '/home/ec2-user/'
+              command: '/home/ec2-user/anaconda/bin/conda install -n jupyter tensorflow -y'
         change_permissions:
           commands:
             01_change_jupyter:
