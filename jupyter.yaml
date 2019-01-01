@@ -205,7 +205,7 @@ Parameters:
     AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
     ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
   NotebookPassword:
-    Description: 'Token to access the Jupyter notebook (Default: 123123)'
+    Description: 'Password to access the Jupyter notebook (Default: 123123)'
     Type: String
     Default: 123123
     NoEcho: true
@@ -437,6 +437,7 @@ Resources:
             - 'install_nginx'
             - 'install_anaconda'
             - 'configure_jupyter'
+            - 'change_permissions'
         configure_cfn:
           files:
             /etc/cfn/hooks.d/cfn-auto-reloader.conf:
@@ -586,18 +587,22 @@ Resources:
           files:
             /home/ec2-user/.jupyter/jupyter_notebook_config.py:
               content: !Sub |
+                from IPython.lib import passwd
+                c = get_config()
                 c.NotebookApp.ip = '*'
-                c.NotebookApp.password = u'sha1${NotebookPassword}'  # u'sha1:${NotebookPassword}'
+                password = passwd('${NotebookPassword}')
+                c.NotebookApp.password = password  # u'sha1:${NotebookPassword}'
                 c.NotebookApp.open_browser = False
                 c.NotebookApp.port = 8888
                 c.NotebookApp.notebook_dir = '/home/ec2-user/notebooks'
                 c.NotebookApp.allow_root = True
                 c.NotebookApp.quit_button = False
-            /home/ec2-user/.jupyter/jupyter_notebook_config.json:
-              content: !Sub |
-                {
+                c.NotebookApp.allow_password_change = False
+            # /home/ec2-user/.jupyter/jupyter_notebook_config.json:
+            #   content: !Sub |
+            #     {
 
-                }
+            #     }
           commands:
             01_source_conda:
               cwd: '/home/ec2-user'
@@ -608,6 +613,14 @@ Resources:
             03_create_notebooks_folder:
               cwd: '/home/ec2-user'
               command: 'mkdir notebooks'
+        change_permissions:
+          commands:
+            01_change_jupyter:
+              cwd: '/home/ec2-user'
+              command: 'sudo chown -R ec2-user:ec2-user .jupyter/'
+            02_change_notebook:
+              cwd: '/home/ec2-user'
+              command: 'sudo chown -R ec2-user:ec2-user ./notebooks/'            
   JupyterSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
