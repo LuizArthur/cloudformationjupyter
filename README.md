@@ -1,5 +1,5 @@
 # cloudformationjupyter
-A Cloud Formation template for Jupyter
+A CloudFormation template for Jupyter
 
 ## Intructions
 - Upload the template to the CloudFormation.
