@@ -209,6 +209,10 @@ Parameters:
     Type: String
     Default: 123123
     NoEcho: true
+  EBSSize:
+    Description: 'Size of the volume in GB'
+    Type: String
+    Default: '20'
 Mappings:
   AWSInstanceType2Arch:
     t1.micro:
@@ -408,6 +412,10 @@ Resources:
       InstanceType: !Ref InstanceType
       ImageId: !FindInMap [AWSRegionArch2AMI, !Ref 'AWS::Region', !FindInMap [AWSInstanceType2Arch, !Ref InstanceType, Arch]]
       KeyName: !Ref KeyName
+      BlockDeviceMappings:
+        - DeviceName: '/dev/xvda'
+          Ebs:
+            VolumeSize: !Ref EBSSize
       NetworkInterfaces:
         - GroupSet:
             - !Ref JupyterSecurityGroup
@@ -435,6 +443,7 @@ Resources:
           jupyter:
             - 'configure_cfn'
             - 'install_nginx'
+            - 'install_git'
             - 'install_anaconda'
             - 'configure_jupyter'
             - 'install_packages'
@@ -564,6 +573,10 @@ Resources:
                 ensureRunning: 'true'
                 files:
                   - '/etc/nginx/nginx.conf'
+        install_git:
+          packages:
+            yum:
+              git: []
         install_anaconda:
           commands:
             01_download_anaconda:
