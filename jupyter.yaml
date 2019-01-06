@@ -213,6 +213,7 @@ Parameters:
     Description: 'Size of the volume in GB'
     Type: String
     Default: '20'
+    AllowedPattern: '[0-9]*'
 Mappings:
   AWSInstanceType2Arch:
     t1.micro:
